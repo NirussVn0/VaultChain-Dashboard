@@ -28,6 +28,12 @@ The app runs on [http://localhost:3000](http://localhost:3000). Environment defa
 - `pnpm typecheck` – run `tsc --noEmit`
 
 ## Architecture Overview
+High-level documentation covering topology, data flow, and CQRS modules lives in [`docs/architecture.md`](docs/architecture.md). It details:
+- App Router composition and UI shell hierarchy
+- Edge routing, CQRS backends, and inference services
+- Deployment workflow across Vercel (frontend) and Railway (backend)
+
+Project structure quick view:
 ```
 src/
   app/             # App Router entrypoints, layout, error & loading states
@@ -37,6 +43,8 @@ src/
     ui/            # Reusable shadcn-styled components
   lib/             # Utilities and mocked data providers
   types/           # Domain contracts (positions, metrics, activities)
+docs/
+  architecture.md  # System topology, CQRS layering, deployment
 ```
 
 ## Design System
@@ -54,7 +62,9 @@ Typography hierarchy:
 - Wire real CQRS endpoints (NestJS Railway deployment) for metrics, positions, and order book depth
 - Connect LSTM and CryptoBERT inference APIs to replace mocked insight data
 - Add authenticated routing, execution modals, and role-based access controls
-MRDs and product specs live in the `docs/` workspace (to be added).
+
+## License
+Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 Crafted with attention to Clean Architecture, strict typing, and production-ready UI patterns.
