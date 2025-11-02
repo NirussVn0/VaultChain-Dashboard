@@ -1,3 +1,4 @@
+import type { ComponentType, SVGProps } from "react";
 import {
   Compass,
   GaugeCircle,
@@ -6,6 +7,7 @@ import {
   Wallet2,
 } from "lucide-react";
 import Link from "next/link";
+import type { Route } from "next";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,13 +17,17 @@ interface SidebarProps {
   activePath?: string;
 }
 
-const NAV_ITEMS = [
+const NAV_ITEMS: ReadonlyArray<{
+  label: string;
+  href: Route;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
+}> = [
   { label: "Overview", href: "/", icon: GaugeCircle },
   { label: "Markets", href: "/markets", icon: LineChart },
   { label: "Strategies", href: "/strategies", icon: Compass },
   { label: "Wallets", href: "/wallets", icon: Wallet2 },
   { label: "Risk Engine", href: "/risk", icon: ShieldHalf },
-] as const;
+];
 
 /**
  * Left navigation for the dashboard shell.

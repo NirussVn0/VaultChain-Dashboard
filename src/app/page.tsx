@@ -4,8 +4,8 @@ import { MetricCard } from "@/components/dashboard/metric-card";
 import { OrderBookCard } from "@/components/dashboard/orderbook-card";
 import { PositionsTable } from "@/components/dashboard/positions-table";
 import { PriceChartCard } from "@/components/dashboard/price-chart-card";
+import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
-import { TopBar } from "@/components/layout/top-bar";
 import {
   activePositions,
   forecastSeries,
@@ -19,11 +19,18 @@ import {
  * VaultChain main dashboard page.
  */
 export default function DashboardPage() {
+  const historical = forecastSeries.filter((point) => point.type === "historical");
+  const predictions = forecastSeries.filter((point) => point.type === "prediction");
+  const basePrice = historical.at(-1)?.price ?? 0;
+  const projectedPrice = predictions.at(-1)?.price ?? basePrice;
+  const commandChange =
+    basePrice > 0 ? (projectedPrice - basePrice) / basePrice : 0;
+
   return (
     <div className="grid min-h-dvh gap-6 p-4 md:p-6 xl:grid-cols-[260px_1fr]">
       <Sidebar />
       <main className="flex min-h-dvh flex-col gap-6">
-        <TopBar latencyMs={42} />
+        <Header symbolChange={commandChange} />
         <section className="flex flex-col gap-6">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {marketMetrics.map((metric) => (
