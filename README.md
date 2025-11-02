@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VaultChain Dashboard
+
+VaultChain Dashboard is a TradingView-grade crypto trading and portfolio platform powered by Next.js 16, TypeScript, shadcn/ui, and ApexCharts. The interface delivers real-time market intelligence, AI-driven forecasts (LSTM pricing + CryptoBERT sentiment), and high-performance execution tooling for institutional crypto desks.
+
+## Tech Stack
+- **Framework:** Next.js 16 (App Router, React 19)
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS 3.4 with VaultChain dark design tokens
+- **UI Kit:** shadcn/ui + Radix primitives
+- **Charting:** ApexCharts via `react-apexcharts`
+- **Utilities:** clsx, tailwind-merge, date-fns for formatting
 
 ## Getting Started
-
-First, run the development server:
+Install dependencies and spin up the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app runs on [http://localhost:3000](http://localhost:3000). Environment defaults to a dark TradingView-inspired surface; toggle the `data-theme="light"` attribute on `<body>` for light mode previews.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
+- `pnpm dev` – start the development server
+- `pnpm build` – create an optimized production build
+- `pnpm start` – run the production build
+- `pnpm lint` – lint all source files (warnings treated as errors)
+- `pnpm typecheck` – run `tsc --noEmit`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture Overview
+```
+src/
+  app/             # App Router entrypoints, layout, error & loading states
+  components/
+    dashboard/     # Feature-specific cards, tables, charts
+    layout/        # Shell primitives (sidebar, top bar)
+    ui/            # Reusable shadcn-styled components
+  lib/             # Utilities and mocked data providers
+  types/           # Domain contracts (positions, metrics, activities)
+```
 
-## Learn More
+## Design System
+The design tokens mirror the VaultChain palette:
+- Background: `#0F172A`
+- Surfaces: `#1E293B`, `#19212F`
+- Border: `#334155`
+- Text: Primary `#F1F5F9`, Secondary `#CBD5E1`, Tertiary `#94A3B8`
+- Highlights: Primary `#3B82F6`, Accent `#14B8A6`, Success `#10B981`, Danger `#EF4444`, Warning `#F59E0B`
 
-To learn more about Next.js, take a look at the following resources:
+Typography hierarchy:
+- H1 32/700, H2 24/600, H3 18/600, Body 14/400, Small 12/500, Tiny 11/500
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Next Steps
+- Wire real CQRS endpoints (NestJS Railway deployment) for metrics, positions, and order book depth
+- Connect LSTM and CryptoBERT inference APIs to replace mocked insight data
+- Add authenticated routing, execution modals, and role-based access controls
+MRDs and product specs live in the `docs/` workspace (to be added).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Crafted with attention to Clean Architecture, strict typing, and production-ready UI patterns.

@@ -1,64 +1,51 @@
-import Image from "next/image";
+import { AiInsightsCard } from "@/components/dashboard/ai-insights-card";
+import { ActivityFeed } from "@/components/dashboard/activity-feed";
+import { MetricCard } from "@/components/dashboard/metric-card";
+import { OrderBookCard } from "@/components/dashboard/orderbook-card";
+import { PositionsTable } from "@/components/dashboard/positions-table";
+import { PriceChartCard } from "@/components/dashboard/price-chart-card";
+import { Sidebar } from "@/components/layout/sidebar";
+import { TopBar } from "@/components/layout/top-bar";
+import {
+  activePositions,
+  forecastSeries,
+  marketMetrics,
+  orderBookLevels,
+  recentActivity,
+  sentimentInsights,
+} from "@/lib/mock-data";
 
-export default function Home() {
+/**
+ * VaultChain main dashboard page.
+ */
+export default function DashboardPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="grid min-h-dvh gap-6 p-4 md:p-6 xl:grid-cols-[260px_1fr]">
+      <Sidebar />
+      <main className="flex min-h-dvh flex-col gap-6">
+        <TopBar latencyMs={42} />
+        <section className="flex flex-col gap-6">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {marketMetrics.map((metric) => (
+              <MetricCard key={metric.id} metric={metric} />
+            ))}
+          </div>
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,2.4fr)_minmax(0,1.2fr)]">
+            <PriceChartCard symbol="BTC-PERP" series={forecastSeries} />
+            <AiInsightsCard
+              symbol="BTC"
+              insights={sentimentInsights}
+              forecastConfidence={0.86}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1.2fr)]">
+            <PositionsTable positions={activePositions} />
+            <div className="grid gap-6">
+              <OrderBookCard levels={orderBookLevels} />
+              <ActivityFeed activity={recentActivity} />
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
