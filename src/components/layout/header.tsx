@@ -42,16 +42,18 @@ interface HeaderProps {
 /**
  * Trading command center header with live connectivity state, search, and quick actions.
  */
+type SystemStoreState = ReturnType<typeof useSystemStore.getState>;
+const selectActiveTab = (state: SystemStoreState) => state.activeTab;
+const selectSetActiveTab = (state: SystemStoreState) => state.setActiveTab;
+
 export function Header({ symbolChange = 0.038 }: HeaderProps) {
   const latencyState = useLatencyFeed(
     process.env["NEXT_PUBLIC_LATENCY_WS_URL"],
     { mockIntervalMs: 3200 },
   );
 
-  const { activeTab, setActiveTab } = useSystemStore((state) => ({
-    activeTab: state.activeTab,
-    setActiveTab: state.setActiveTab,
-  }));
+  const activeTab = useSystemStore(selectActiveTab);
+  const setActiveTab = useSystemStore(selectSetActiveTab);
 
   const [selectedSymbol, setSelectedSymbol] = useState<TradingSymbol>(DEFAULT_SYMBOL);
   const [timestamp, setTimestamp] = useState<Date>(() => new Date(MOCK_NOW));

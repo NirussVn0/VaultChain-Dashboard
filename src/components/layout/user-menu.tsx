@@ -29,7 +29,10 @@ export function UserMenu() {
           <Avatar className="h-8 w-8">
             <AvatarFallback>AO</AvatarFallback>
           </Avatar>
-          <div className="hidden flex-col leading-tight md:flex">
+          <div
+            className="hidden flex-col leading-tight md:flex"
+            suppressHydrationWarning
+          >
             <span className="text-sm font-semibold">{user.name}</span>
             <span className="text-[11px] uppercase tracking-[0.18em] text-text-tertiary">
               Command Suite
