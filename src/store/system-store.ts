@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { minutesFromNow } from "@/lib/mock-clock";
+
 export interface NotificationItem {
   id: string;
   title: string;
@@ -25,7 +27,7 @@ const initialNotifications: NotificationItem[] = [
     id: "notif-1",
     title: "Strategy Rebalance",
     description: "Quant Edge rotated 12% into AI Momentum basket.",
-    createdAt: Date.now() - 1000 * 60 * 9,
+    createdAt: minutesFromNow(-9),
     read: false,
     severity: "info",
   },
@@ -33,7 +35,7 @@ const initialNotifications: NotificationItem[] = [
     id: "notif-2",
     title: "Funding Alert",
     description: "BTC-PERP funding premium exceeded 18 bps.",
-    createdAt: Date.now() - 1000 * 60 * 32,
+    createdAt: minutesFromNow(-32),
     read: false,
     severity: "warning",
   },
@@ -41,7 +43,7 @@ const initialNotifications: NotificationItem[] = [
     id: "notif-3",
     title: "Execution Report",
     description: "Auto-hedge completed for SOL basis spread.",
-    createdAt: Date.now() - 1000 * 60 * 66,
+    createdAt: minutesFromNow(-66),
     read: true,
     severity: "success",
   },

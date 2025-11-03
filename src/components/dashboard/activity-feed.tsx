@@ -37,11 +37,15 @@ export function ActivityFeed({ activity }: ActivityFeedProps) {
             <div className="mt-[2px]">{activityIcons[item.type]}</div>
             <div className="flex flex-1 flex-col gap-1">
               <p className="text-sm text-text-secondary">{item.description}</p>
-              <span className="text-[11px] uppercase tracking-[0.2em] text-text-tertiary">
+              <time
+                className="text-[11px] uppercase tracking-[0.2em] text-text-tertiary"
+                dateTime={new Date(item.timestamp).toISOString()}
+                suppressHydrationWarning
+              >
                 {formatDistanceToNowStrict(item.timestamp, {
                   addSuffix: true,
                 })}
-              </span>
+              </time>
             </div>
           </div>
         ))}

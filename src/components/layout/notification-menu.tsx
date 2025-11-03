@@ -113,11 +113,15 @@ export function NotificationMenu() {
                         <p className="mt-1 text-xs text-text-tertiary">
                           {notification.description}
                         </p>
-                        <span className="mt-2 inline-block text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                        <time
+                          className="mt-2 inline-block text-[10px] uppercase tracking-[0.16em] text-text-muted"
+                          dateTime={new Date(notification.createdAt).toISOString()}
+                          suppressHydrationWarning
+                        >
                           {formatDistanceToNowStrict(notification.createdAt, {
                             addSuffix: true,
                           })}
-                        </span>
+                        </time>
                       </motion.div>
                     );
                   })}

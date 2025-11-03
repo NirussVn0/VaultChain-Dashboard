@@ -6,6 +6,7 @@ import {
   type Position,
   type SentimentInsight,
 } from "@/types/trading";
+import { hoursFromNow, minutesFromNow, MOCK_NOW } from "@/lib/mock-clock";
 
 /**
  * Mocked market kpis for first render. Replace with API feed when wiring.
@@ -105,33 +106,33 @@ export const sentimentInsights: SentimentInsight[] = [
 ];
 
 export const forecastSeries: ForecastPoint[] = [
-  { timestamp: Date.now() - 1000 * 60 * 60 * 10, price: 57_820, type: "historical" },
-  { timestamp: Date.now() - 1000 * 60 * 60 * 8, price: 58_460, type: "historical" },
-  { timestamp: Date.now() - 1000 * 60 * 60 * 6, price: 59_320, type: "historical" },
-  { timestamp: Date.now() - 1000 * 60 * 60 * 4, price: 60_420, type: "historical" },
-  { timestamp: Date.now() - 1000 * 60 * 60 * 2, price: 61_120, type: "historical" },
-  { timestamp: Date.now(), price: 61_420, type: "historical" },
-  { timestamp: Date.now() + 1000 * 60 * 60 * 2, price: 61_980, type: "prediction" },
-  { timestamp: Date.now() + 1000 * 60 * 60 * 4, price: 62_430, type: "prediction" },
-  { timestamp: Date.now() + 1000 * 60 * 60 * 6, price: 62_960, type: "prediction" },
+  { timestamp: hoursFromNow(-10), price: 57_820, type: "historical" },
+  { timestamp: hoursFromNow(-8), price: 58_460, type: "historical" },
+  { timestamp: hoursFromNow(-6), price: 59_320, type: "historical" },
+  { timestamp: hoursFromNow(-4), price: 60_420, type: "historical" },
+  { timestamp: hoursFromNow(-2), price: 61_120, type: "historical" },
+  { timestamp: MOCK_NOW, price: 61_420, type: "historical" },
+  { timestamp: hoursFromNow(2), price: 61_980, type: "prediction" },
+  { timestamp: hoursFromNow(4), price: 62_430, type: "prediction" },
+  { timestamp: hoursFromNow(6), price: 62_960, type: "prediction" },
 ];
 
 export const recentActivity: ActivityItem[] = [
   {
     id: "activity-1",
-    timestamp: Date.now() - 1000 * 60 * 5,
+    timestamp: minutesFromNow(-5),
     description: "Auto-hedged -2.4 BTC using DeltaGuard™ hedging policy.",
     type: "trade",
   },
   {
     id: "activity-2",
-    timestamp: Date.now() - 1000 * 60 * 35,
+    timestamp: minutesFromNow(-35),
     description: "Funding arbitrage signal triggered for SOL-PERP vs. spot.",
     type: "alert",
   },
   {
     id: "activity-3",
-    timestamp: Date.now() - 1000 * 60 * 86,
+    timestamp: minutesFromNow(-86),
     description: "LSTM forecast updated · next review in 2h.",
     type: "update",
   },

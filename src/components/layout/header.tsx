@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
 import { useLatencyFeed } from "@/hooks/use-latency-feed";
 import { DEFAULT_SYMBOL, type TradingSymbol } from "@/lib/trading-symbols";
+import { MOCK_NOW } from "@/lib/mock-clock";
 import { cn, formatPercent } from "@/lib/utils";
 import { useSystemStore } from "@/store/system-store";
 
@@ -53,11 +54,17 @@ export function Header({ symbolChange = 0.038 }: HeaderProps) {
   }));
 
   const [selectedSymbol, setSelectedSymbol] = useState<TradingSymbol>(DEFAULT_SYMBOL);
-  const [timestamp, setTimestamp] = useState(() => new Date());
+  const [timestamp, setTimestamp] = useState<Date>(() => new Date(MOCK_NOW));
 
   useEffect(() => {
-    const timer = setInterval(() => setTimestamp(new Date()), 60_000);
-    return () => clearInterval(timer);
+    const updateTimestamp = () => setTimestamp(new Date());
+    const kickoff = setTimeout(updateTimestamp, 0);
+    const timer = setInterval(updateTimestamp, 60_000);
+
+    return () => {
+      clearTimeout(kickoff);
+      clearInterval(timer);
+    };
   }, []);
 
   const timeframeLabel = useMemo(() => getTimezoneLabel(timestamp), [timestamp]);
