@@ -37,11 +37,10 @@ const resolveInitialTheme = (initialMode: ThemeMode): ThemeMode => {
  */
 export function useTheme(initialMode: ThemeMode = "dark"): UseThemeReturn {
   const [theme, setThemeState] = useState<ThemeMode>(() => resolveInitialTheme(initialMode));
-  const isMounted = typeof window !== "undefined";
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.body.dataset["theme"] = theme;
       document.documentElement.dataset["theme"] = theme;
     }
 
@@ -50,13 +49,17 @@ export function useTheme(initialMode: ThemeMode = "dark"): UseThemeReturn {
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (!isMounted && typeof window !== "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsMounted(true);
+    }
+  }, [isMounted]);
+
   const setTheme = useCallback((updater: ThemeUpdater) => {
-    setThemeState((current) => {
-      if (typeof updater === "function") {
-        return (updater as (value: ThemeMode) => ThemeMode)(current);
-      }
-      return updater;
-    });
+    setThemeState((current) =>
+      typeof updater === "function" ? (updater as (value: ThemeMode) => ThemeMode)(current) : updater,
+    );
   }, []);
 
   const toggleTheme = useCallback(() => {

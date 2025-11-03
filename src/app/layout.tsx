@@ -67,7 +67,7 @@ export default function RootLayout({
           geistSans.variable,
           geistMono.variable,
         )}
-        data-theme="dark"
+        suppressHydrationWarning={true}
       >
         {children}
       </body>
