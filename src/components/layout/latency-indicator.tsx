@@ -41,7 +41,10 @@ export function LatencyIndicator({ latency, status, lastUpdated }: LatencyIndica
   const latencyLabel = useMemo(() => `${Math.round(latency)}ms`, [latency]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-background-elevated/40 px-4 py-2 text-sm">
+    <div
+      className="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-background-elevated/40 px-4 py-2 text-sm"
+      suppressHydrationWarning
+    >
       <div className="flex items-center gap-2 text-text-secondary">
         <Clock4 className="h-4 w-4" aria-hidden="true" />
         <span className="text-xs uppercase tracking-[0.16em] text-text-tertiary">

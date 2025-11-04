@@ -71,10 +71,16 @@ export function SymbolSearch({ value, onSelect }: SymbolSearchProps) {
           type="button"
           className="group flex items-center gap-3 rounded-xl border border-border/60 bg-background-elevated/40 px-4 py-2 text-left transition hover:border-border/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary transition group-hover:bg-primary/15">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary transition group-hover:bg-primary/15"
+            suppressHydrationWarning
+          >
             <Search className="h-4 w-4" aria-hidden="true" />
           </div>
-          <div className="flex flex-col leading-tight">
+          <div
+            className="flex flex-col leading-tight"
+            suppressHydrationWarning
+          >
             <span className="text-sm font-semibold text-text-primary">
               {value.symbol}
             </span>
