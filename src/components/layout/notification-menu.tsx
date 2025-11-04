@@ -23,11 +23,13 @@ const contentMotion = {
   exit: { opacity: 0, y: 4 },
 };
 
+type NotificationStore = ReturnType<typeof useSystemStore.getState>;
+const selectNotifications = (state: NotificationStore) => state.notifications;
+const selectMarkAllRead = (state: NotificationStore) => state.markAllNotificationsRead;
+
 export function NotificationMenu() {
-  const { notifications, markAllNotificationsRead } = useSystemStore((state) => ({
-    notifications: state.notifications,
-    markAllNotificationsRead: state.markAllNotificationsRead,
-  }));
+  const notifications = useSystemStore(selectNotifications);
+  const markAllNotificationsRead = useSystemStore(selectMarkAllRead);
 
   const [open, setOpen] = useState(false);
 
