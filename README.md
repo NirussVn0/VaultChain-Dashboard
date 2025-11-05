@@ -1,70 +1,83 @@
 # VaultChain Dashboard
 
-VaultChain Dashboard is a TradingView-grade crypto trading and portfolio platform powered by Next.js 16, TypeScript, shadcn/ui, and ApexCharts. The interface delivers real-time market intelligence, AI-driven forecasts (LSTM pricing + CryptoBERT sentiment), and high-performance execution tooling for institutional crypto desks.
+![Next.js](https://img.shields.io/badge/Next.js-16.0.1-black?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4-06b6d4?logo=tailwindcss&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Latest-000000?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIvPjwvc3ZnPg==)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-## Tech Stack
-- **Framework:** Next.js 16 (App Router, React 19)
-- **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS 3.4 with VaultChain dark design tokens
-- **UI Kit:** shadcn/ui + Radix primitives
-- **Charting:** ApexCharts via `react-apexcharts`
-- **Utilities:** clsx, tailwind-merge, date-fns for formatting
+> **TradingView-grade crypto trading & portfolio intelligence platform** powered by advanced AI, real-time market feeds, and institutional-grade execution tooling.
 
-## Getting Started
-Install dependencies and spin up the development server:
+## 🚀 Overview
 
-```bash
+VaultChain Dashboard is a professional-grade crypto trading platform delivering **real-time market intelligence**, **AI-driven forecasts** (LSTM pricing + CryptoBERT sentiment analysis), and **high-performance execution** for institutional crypto desks.
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| **Framework** | ![Next.js](https://img.shields.io/badge/-Next.js%2016-000?logo=next.js) ![React](https://img.shields.io/badge/-React%2019-61dafb?logo=react&logoColor=black) |
+| **Components** |![Tailwind CSS](https://img.shields.io/badge/-Tailwind%203.4-06b6d4?logo=tailwindcss&logoColor=white) ![shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000) ![ApexCharts](https://img.shields.io/badge/-ApexCharts-FF6B6B) + `react-apexcharts` + `Radix Primitives`|
+| **Utilities** | `clsx` • `tailwind-merge` • `date-fns` |
+
+---
+
+## ⚡ Quick Start
+
+```
+# Install dependencies
 pnpm install
+
+# Start development server
 pnpm dev
 ```
 
-The app runs on [http://localhost:3000](http://localhost:3000). Environment defaults to a dark TradingView-inspired surface; toggle the `data-theme="light"` attribute on `<body>` for light mode previews.
-
-## Available Scripts
-- `pnpm dev` – start the development server
-- `pnpm build` – create an optimized production build
-- `pnpm start` – run the production build
-- `pnpm lint` – lint all source files (warnings treated as errors)
-- `pnpm typecheck` – run `tsc --noEmit`
-
-## Architecture Overview
-High-level documentation covering topology, data flow, and CQRS modules lives in [`docs/architecture.md`](docs/architecture.md). It details:
-- App Router composition and UI shell hierarchy
-- Edge routing, CQRS backends, and inference services
-- Deployment workflow across Vercel (frontend) and Railway (backend)
-
-Project structure quick view:
-```
-src/
-  app/             # App Router entrypoints, layout, error & loading states
-  components/
-    dashboard/     # Feature-specific cards, tables, charts
-    layout/        # Shell primitives (sidebar, top bar)
-    ui/            # Reusable shadcn-styled components
-  lib/             # Utilities and mocked data providers
-  types/           # Domain contracts (positions, metrics, activities)
-docs/
-  architecture.md  # System topology, CQRS layering, deployment
-```
-
-## Design System
-The design tokens mirror the VaultChain palette:
-- Background: `#0F172A`
-- Surfaces: `#1E293B`, `#19212F`
-- Border: `#334155`
-- Text: Primary `#F1F5F9`, Secondary `#CBD5E1`, Tertiary `#94A3B8`
-- Highlights: Primary `#3B82F6`, Accent `#14B8A6`, Success `#10B981`, Danger `#EF4444`, Warning `#F59E0B`
-
-Typography hierarchy:
-- H1 32/700, H2 24/600, H3 18/600, Body 14/400, Small 12/500, Tiny 11/500
-
-## Next Steps
-- Wire real CQRS endpoints (NestJS Railway deployment) for metrics, positions, and order book depth
-- Connect LSTM and CryptoBERT inference APIs to replace mocked insight data
-- Add authenticated routing, execution modals, and role-based access controls
-
-## License
-Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
+🌐 Open [http://localhost:3000](http://localhost:3000) — Dark TradingView aesthetic enabled by default.  
+Toggle **light mode** via `data-theme="light"` on `<body>` element.
 
 ---
-Crafted with attention to Clean Architecture, strict typing, and production-ready UI patterns.
+
+## 📦 Available Scripts
+
+```
+pnpm dev        # Start dev server (Turbopack enabled)
+pnpm build      # Production-optimized build
+pnpm start      # Run production build
+pnpm lint       # Lint all files (warnings as errors)
+pnpm typecheck  # TypeScript strict validation (tsc --noEmit)
+```
+
+---
+
+## ✨ Key Features
+
+- ✅ **Real-time Market Data** — Live crypto feeds with WebSocket integration
+- ✅ **AI-Powered Forecasting** — LSTM price prediction + CryptoBERT sentiment
+- ✅ **Professional UI** — TradingView-grade design with dark/light modes
+- ✅ **Institutional-Grade** — High-performance charting & execution tooling
+- ✅ **Type-Safe** — 100% TypeScript strict mode
+- ✅ **Production-Ready** — Clean architecture + best practices
+
+---
+
+## 📄 License
+
+MIT License — See [LICENSE](./LICENSE) for details.
+
+---
+
+## 🤝 Collaborators
+
+Proudly built by awesome contributors:
+
+| Name             | Role               | GitHub           |  
+|------------------|--------------------|------------------|  
+| [Niruss](https://github.com/NirussVn0)  | Own Dev       | ![GitHub](https://img.shields.io/badge/-@nirussvn0-181717?logo=github&logoColor=white) |  
+
+---
+
+> Want to join the squad? Open a PR or get in touch!

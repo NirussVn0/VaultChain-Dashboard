@@ -40,6 +40,7 @@ The dashboard ships as a statically optimised Next.js 16 application deployed on
 
 - **Framework**: Next.js 16 App Router with React Server Components (RSC) for streaming data and Suspense-driven fallbacks.
 - **State/Async**: RSC data fetching combined with server actions (mutation commands) and SWR hooks for client revalidation.
+- **Realtime Pipeline**: `MarketDataProvider` (client) hydrates a Zustand store from WebSocket streams (Binance by default) and exposes selectors via `useMarket*` hooks for tickers, depth, and connection telemetry.
 - **UI System**:
   - `src/components/layout`: global shell primitives (sidebar, top bar).
   - `src/components/dashboard`: feature composition modules (charts, tables, analytics cards).
@@ -52,7 +53,7 @@ The dashboard ships as a statically optimised Next.js 16 application deployed on
 ### Data Flow in the Dashboard
 
 1. **Server Data Fetching**: Dashboard route uses RSC to compose metrics, positions, and insights. Edge route handlers interface with backend queries (to be wired).
-2. **Real-Time Streams**: WebSocket/SSE connections are brokered via Vercel Edge middleware, fan-out to Next.js client components. Chart series leverage incremental hydration.
+2. **Real-Time Streams**: WebSocket/SSE connections are brokered via Vercel Edge middleware, fan-out to Next.js client components. The `market-store` binds the socket heartbeat to the header latency badge, portfolio KPIs, active positions table, and the order book card with animated diff highlighting.
 3. **AI Outputs**: LSTM and CryptoBERT responses get normalised by the backend before hitting the frontend. The UI expects deterministic schema (`ForecastPoint`, `SentimentInsight`) to keep rendering pure.
 
 ---
@@ -95,4 +96,3 @@ src/
 - Add optimistic UI flows with server actions for trade placement and risk approvals.
 - Instrument WebSocket stream recovery and degrade gracefully to polling when latency thresholds are exceeded.
 - Expand docs with sequence diagrams for order execution and margin rebalancing flows.
-
