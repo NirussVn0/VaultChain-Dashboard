@@ -18,8 +18,12 @@ const config: Config = {
     },
     extend: {
       borderRadius: {
-        lg: "12px",
+        xs: "4px",
+        sm: "8px",
+        md: "12px",
+        lg: "16px",
         xl: "18px",
+        "2xl": "24px",
       },
       boxShadow: {
         card: "0px 16px 40px rgba(15, 23, 42, 0.35)",
