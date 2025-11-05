@@ -1,9 +1,12 @@
+export type PortfolioTimeframe = "24h" | "7d" | "30d" | "all";
+
 export interface MarketMetric {
   id: string;
   label: string;
   value: number;
   change: number;
   currency?: string;
+  history?: Partial<Record<PortfolioTimeframe, number[]>>;
 }
 
 export interface Position {

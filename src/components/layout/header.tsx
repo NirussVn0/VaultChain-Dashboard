@@ -11,7 +11,7 @@ import { NotificationMenu } from "@/components/layout/notification-menu";
 import { SymbolSearch } from "@/components/layout/symbol-search";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
-import { useLatencyFeed } from "@/hooks/use-latency-feed";
+import { useMarketConnectionState } from "@/hooks/use-market-data";
 import { DEFAULT_SYMBOL, type TradingSymbol } from "@/lib/trading-symbols";
 import { MOCK_NOW } from "@/lib/mock-clock";
 import { cn, formatPercent } from "@/lib/utils";
@@ -47,10 +47,7 @@ const selectActiveTab = (state: SystemStoreState) => state.activeTab;
 const selectSetActiveTab = (state: SystemStoreState) => state.setActiveTab;
 
 export function Header({ symbolChange = 0.038 }: HeaderProps) {
-  const latencyState = useLatencyFeed(
-    process.env["NEXT_PUBLIC_LATENCY_WS_URL"],
-    { mockIntervalMs: 3200 },
-  );
+  const connectionState = useMarketConnectionState();
 
   const activeTab = useSystemStore(selectActiveTab);
   const setActiveTab = useSystemStore(selectSetActiveTab);
@@ -137,9 +134,15 @@ export function Header({ symbolChange = 0.038 }: HeaderProps) {
         />
         <div className="flex flex-wrap items-center gap-3">
           <LatencyIndicator
-            latency={latencyState.latency}
-            status={latencyState.status}
-            lastUpdated={latencyState.lastUpdated}
+            latency={connectionState.latencyMs}
+            status={
+              connectionState.status === "online"
+                ? "online"
+                : connectionState.status === "offline"
+                  ? "offline"
+                  : "connecting"
+            }
+            lastUpdated={connectionState.lastHeartbeat}
           />
         </div>
       </div>

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "./globals.css";
 import { cn } from "@/lib/utils";
+import { MarketDataProvider } from "@/providers/market-data-provider";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -69,7 +71,9 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        {children}
+        <MarketDataProvider>
+          {children}
+        </MarketDataProvider>
       </body>
     </html>
   );
