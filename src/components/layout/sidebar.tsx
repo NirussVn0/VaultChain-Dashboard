@@ -7,7 +7,6 @@ import {
   Wallet2,
 } from "lucide-react";
 import Link from "next/link";
-import type { Route } from "next";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +18,7 @@ interface SidebarProps {
 
 const NAV_ITEMS: ReadonlyArray<{
   label: string;
-  href: Route;
+  href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 }> = [
   { label: "Overview", href: "/", icon: GaugeCircle },
