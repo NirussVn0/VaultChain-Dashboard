@@ -55,7 +55,7 @@ export function Sidebar({ activePath = "/" }: SidebarProps) {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={{ pathname: item.href }}
                 className={cn(
                   "flex items-center gap-3 rounded-xl border border-transparent px-4 py-3 text-sm font-medium text-text-tertiary transition-colors hover:border-border/70 hover:text-text-primary",
                   isActive &&
