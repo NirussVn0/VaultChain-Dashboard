@@ -11,6 +11,12 @@ import {
   useMarketStore,
 } from "@/store/market-store";
 
+type TickerMode = "ui" | "raw";
+
+interface UseTickerOptions {
+  mode?: TickerMode;
+}
+
 export function useMarketConnectionState() {
   const status = useMarketStore((state) => state.status);
   const latencyMs = useMarketStore((state) => state.latencyMs);
@@ -26,8 +32,13 @@ export function useMarketConnectionState() {
   );
 }
 
-export function useMarketTicker(symbol: string | null | undefined): MarketTicker | undefined {
-  const tickers = useMarketStore((state) => state.tickers);
+export function useMarketTicker(
+  symbol: string | null | undefined,
+  { mode = "ui" }: UseTickerOptions = {},
+): MarketTicker | undefined {
+  const tickers = useMarketStore((state) =>
+    mode === "raw" ? state.tickers : state.uiTickers,
+  );
 
   return useMemo(() => {
     if (!symbol) {
@@ -70,7 +81,10 @@ export function useMarketOrderBook(symbol: string | null | undefined): OrderBook
   }, [orderBooks, symbol]);
 }
 
-export function useMarketTickers(symbols?: string[]): Record<string, MarketTicker | undefined> {
+export function useMarketTickers(
+  symbols?: string[],
+  { mode = "ui" }: UseTickerOptions = {},
+): Record<string, MarketTicker | undefined> {
   const normalized = useMemo(() => {
     if (symbols && symbols.length > 0) {
       return symbols.map((item) => item.toUpperCase());
@@ -81,21 +95,22 @@ export function useMarketTickers(symbols?: string[]): Record<string, MarketTicke
   const selector = useMemo(
     () => {
       return (state: MarketState) => {
+        const sourceTickers = mode === "raw" ? state.tickers : state.uiTickers;
         const result: Record<string, MarketTicker | undefined> = {};
         normalized.forEach((key, index) => {
           const source = symbols?.[index] ?? FEED_TO_SYMBOL[key] ?? key;
-          const direct = state.tickers[key];
+          const direct = sourceTickers[key];
           if (direct) {
             result[source] = direct;
             return;
           }
           const feed = toFeedSymbol(source);
-          result[source] = feed ? state.tickers[feed] : undefined;
+          result[source] = feed ? sourceTickers[feed] : undefined;
         });
         return result;
       };
     },
-    [normalized, symbols],
+    [mode, normalized, symbols],
   );
 
   return useMarketStore(selector, shallow);

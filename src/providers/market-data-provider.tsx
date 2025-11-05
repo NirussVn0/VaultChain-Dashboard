@@ -160,10 +160,70 @@ export function MarketDataProvider({
   }, [depthFeedSymbol, feedSymbols]);
 
   const fallbackRef = useRef<Record<string, FallbackState>>({});
+  const uiTickerStateRef = useRef<{
+    timers: Map<string, ReturnType<typeof setTimeout>>;
+    lastPush: Map<string, number>;
+    buffer: Map<string, MarketTicker>;
+  }>({
+    timers: new Map(),
+    lastPush: new Map(),
+    buffer: new Map(),
+  });
 
   useEffect(() => {
     const store = useMarketStore.getState();
-    const { setStatus, setLatency, upsertTicker, upsertOrderBook, reset } = store;
+    const {
+      setStatus,
+      setLatency,
+      upsertTicker,
+      upsertUiTicker,
+      upsertOrderBook,
+      reset,
+    } = store;
+
+    const queueUiTicker = (ticker: MarketTicker) => {
+      const symbol = ticker.symbol;
+      const state = uiTickerStateRef.current;
+      const now = Date.now();
+      const lastPush = state.lastPush.get(symbol) ?? 0;
+      const elapsed = now - lastPush;
+      state.buffer.set(symbol, ticker);
+
+      const push = (payload: MarketTicker) => {
+        upsertUiTicker(payload);
+        state.lastPush.set(symbol, Date.now());
+      };
+
+      if (elapsed >= 3200) {
+        push(ticker);
+        const pending = state.timers.get(symbol);
+        if (pending) {
+          clearTimeout(pending);
+          state.timers.delete(symbol);
+        }
+        return;
+      }
+
+      if (state.timers.has(symbol)) {
+        return;
+      }
+
+      const waitDuration = Math.max(3200 - elapsed, 0);
+      const timeout = setTimeout(() => {
+        const latest = state.buffer.get(symbol) ?? ticker;
+        push(latest);
+        state.timers.delete(symbol);
+      }, waitDuration);
+      state.timers.set(symbol, timeout);
+    };
+
+    const clearUiTickerTimers = () => {
+      const state = uiTickerStateRef.current;
+      state.timers.forEach((timeout) => clearTimeout(timeout));
+      state.timers.clear();
+      state.buffer.clear();
+      state.lastPush.clear();
+    };
 
     let socket: WebSocket | null = null;
     let fallbackTimer: ReturnType<typeof setInterval> | null = null;
@@ -219,6 +279,7 @@ export function MarketDataProvider({
         };
 
         upsertTicker(ticker);
+        queueUiTicker(ticker);
 
         if (symbol === depthFeedSymbol) {
           const midpoint = nextPrice;
@@ -286,6 +347,7 @@ export function MarketDataProvider({
         if (isTickerStream(stream)) {
           const ticker = parseTicker(data as BinanceTickerEvent);
           upsertTicker(ticker);
+          queueUiTicker(ticker);
           setLatency(computeLatency(ticker.lastUpdated), Date.now());
         } else if (isDepthStream(stream)) {
           const depth = parseDepth(data as BinanceDepthEvent);
@@ -298,6 +360,7 @@ export function MarketDataProvider({
       if ("c" in payload && "s" in payload) {
         const ticker = parseTicker(payload as BinanceTickerEvent);
         upsertTicker(ticker);
+        queueUiTicker(ticker);
         setLatency(computeLatency(ticker.lastUpdated), Date.now());
         return;
       }
@@ -350,6 +413,7 @@ export function MarketDataProvider({
 
     return () => {
       stopFallback();
+      clearUiTickerTimers();
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);
       }
