@@ -7,6 +7,7 @@ import {
   Wallet2,
 } from "lucide-react";
 import Link from "next/link";
+import type { Route } from "next";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -16,11 +17,13 @@ interface SidebarProps {
   activePath?: string;
 }
 
-const NAV_ITEMS: ReadonlyArray<{
+interface NavItem {
   label: string;
-  href: string;
+  href: Route;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
-}> = [
+}
+
+const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { label: "Overview", href: "/", icon: GaugeCircle },
   { label: "Markets", href: "/markets", icon: LineChart },
   { label: "Strategies", href: "/strategies", icon: Compass },
@@ -55,7 +58,7 @@ export function Sidebar({ activePath = "/" }: SidebarProps) {
             return (
               <Link
                 key={item.href}
-                href={{ pathname: item.href }}
+                href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-xl border border-transparent px-4 py-3 text-sm font-medium text-text-tertiary transition-colors hover:border-border/70 hover:text-text-primary",
                   isActive &&
