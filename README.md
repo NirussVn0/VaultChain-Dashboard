@@ -76,7 +76,7 @@ Proudly built by awesome contributors:
 
 | Name             | Role               | Socials           |  
 |------------------|--------------------|------------------|  
-| [Niruss](https://github.com/NirussVn0)  | Own Dev       | ![GitHub](https://img.shields.io/badge/-@nirussvn0-181717?logo=github&logoColor=white) [![X](https://img.shields.io/badge/-@nirussvn0-1da1f2?logo=x&logoColor=white)](https://x.com/nirusskumii) [![Portfolio](https://img.shields.io/badge/-website-0a192f?logo=firefox&logoColor=white)](https://sabicoder.xyz) |  
+| [Niruss](https://github.com/NirussVn0)  | Own Dev       | ![GitHub](https://img.shields.io/badge/-@nirussvn0-181717?logo=github&logoColor=white) [![X](https://img.shields.io/badge/-@nirussvn0-1da1f2?logo=x&logoColor=white)](https://x.com/nirussvn0) [![Portfolio](https://img.shields.io/badge/-website-0a192f?logo=firefox&logoColor=white)](https://sabicoder.xyz) |  
 
 ---
 
