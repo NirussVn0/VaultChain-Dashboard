@@ -26,30 +26,49 @@ VaultChain Dashboard is a professional-grade crypto trading platform delivering 
 
 ---
 
-## ⚡ Quick Start
+## ⚙️ Monorepo Layout
 
 ```
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
+frontend/   # Next.js 16 dashboard (App Router, Tailwind, shadcn/ui)
+backend/    # NestJS API (CQRS-ready modules, AI providers, market adapters)
+docs/       # Architecture, design system, and project docs
+agent/      # Progress tracking, prompts, and internal rules
 ```
-
-🌐 Open [http://localhost:3000](http://localhost:3000) — Dark TradingView aesthetic enabled by default.  
-Toggle **light mode** via `data-theme="light"` on `<body>` element.
 
 ---
 
-## 📦 Available Scripts
+## ⚡ Quick Start
 
+```bash
+# Install once for the whole workspace
+pnpm install
+
+# Run frontend (Next.js)
+pnpm dev
+
+# Run backend (NestJS)
+pnpm dev:backend
 ```
-pnpm dev        # Start dev server (Turbopack enabled)
-pnpm build      # Production-optimized build
-pnpm start      # Run production build
-pnpm lint       # Lint all files (warnings as errors)
-pnpm typecheck  # TypeScript strict validation (tsc --noEmit)
+
+🌐 Frontend: [http://localhost:3000](http://localhost:3000)  
+🛡️ Backend REST: [http://localhost:4000/api/v1](http://localhost:4000/api/v1)
+
+> Copy `.env.example` to `.env` in both `frontend/` and `backend/` when supplying real credentials (AI provider keys, custom REST endpoints, etc.).
+
+---
+
+## 📦 Workspace Scripts
+
+```bash
+pnpm dev            # frontend dev server (Turbopack)
+pnpm dev:backend    # backend dev server (NestJS)
+pnpm build          # build all packages
+pnpm lint           # lint workspace (frontend + backend)
+pnpm typecheck      # strict TypeScript across projects
+pnpm start          # run frontend production server
 ```
+
+Each package also exposes local scripts (see `package.json` inside `frontend/` and `backend/`).
 
 ---
 
@@ -61,6 +80,22 @@ pnpm typecheck  # TypeScript strict validation (tsc --noEmit)
 - ✅ **Institutional-Grade** — High-performance charting & execution tooling
 - ✅ **Type-Safe** — 100% TypeScript strict mode
 - ✅ **Production-Ready** — Clean architecture + best practices
+
+---
+
+## 🐳 Docker / CI/CD
+
+### Compose (local parity)
+
+```bash
+docker compose up --build
+```
+
+- Frontend available at `http://localhost:3000`
+- Backend API at `http://localhost:4000/api/v1`
+
+### GitHub Actions
+- `.github/workflows/ci.yml` runs lint → typecheck → build for both packages and validates Docker images.
 
 ---
 
