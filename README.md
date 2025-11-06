@@ -20,21 +20,10 @@ VaultChain Dashboard is a professional-grade crypto trading platform delivering 
 
 | Category | Technologies |
 |----------|--------------|
-| **Framework** | ![Next.js](https://img.shields.io/badge/-Next.js%2016-000?logo=next.js) ![React](https://img.shields.io/badge/-React%2019-61dafb?logo=react&logoColor=black) |
+| **frontend** | ![Next.js](https://img.shields.io/badge/-Next.js%2016-000?logo=next.js) ![React](https://img.shields.io/badge/-React%2019-61dafb?logo=react&logoColor=black)|
+| **backend** | ![NestJS](https://img.shields.io/badge/-NestJS%2014-E0234E?logo=nestjs) |
 | **Components** |![Tailwind CSS](https://img.shields.io/badge/-Tailwind%203.4-06b6d4?logo=tailwindcss&logoColor=white) ![shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000) ![ApexCharts](https://img.shields.io/badge/-ApexCharts-FF6B6B) + `react-apexcharts` + `Radix Primitives`|
 | **Utilities** | `clsx` • `tailwind-merge` • `date-fns` |
-
----
-
-## ⚙️ Monorepo Layout
-
-```
-frontend/   # Next.js 16 dashboard (App Router, Tailwind, shadcn/ui)
-backend/    # NestJS API (CQRS-ready modules, AI providers, market adapters)
-docs/       # Architecture, design system, and project docs
-agent/      # Progress tracking, prompts, and internal rules
-```
-
 ---
 
 ## ⚡ Quick Start
@@ -70,19 +59,6 @@ pnpm start          # run frontend production server
 
 Each package also exposes local scripts (see `package.json` inside `frontend/` and `backend/`).
 
----
-
-## ✨ Key Features
-
-- ✅ **Real-time Market Data** — Live crypto feeds with WebSocket integration
-- ✅ **AI-Powered Forecasting** — LSTM price prediction + CryptoBERT sentiment
-- ✅ **Professional UI** — TradingView-grade design with dark/light modes
-- ✅ **Institutional-Grade** — High-performance charting & execution tooling
-- ✅ **Type-Safe** — 100% TypeScript strict mode
-- ✅ **Production-Ready** — Clean architecture + best practices
-
----
-
 ## 🐳 Docker / CI/CD
 
 ### Compose (local parity)
@@ -96,6 +72,17 @@ docker compose up --build
 
 ### GitHub Actions
 - `.github/workflows/ci.yml` runs lint → typecheck → build for both packages and validates Docker images.
+
+---
+
+## ✨ Key Features
+
+- ✅ **Real-time Market Data** — Live crypto feeds with WebSocket integration
+- ✅ **AI-Powered Forecasting** — LSTM price prediction + CryptoBERT sentiment
+- ✅ **Professional UI** — TradingView-grade design with dark/light modes
+- ✅ **Institutional-Grade** — High-performance charting & execution tooling
+- ✅ **Type-Safe** — 100% TypeScript strict mode
+- ✅ **Production-Ready** — Clean architecture + best practices
 
 ---
 
