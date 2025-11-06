@@ -84,8 +84,9 @@ src/
 
 ## Deployment & Delivery
 
-- **Frontend**: Vercel deployments triggered via GitHub Actions. Edge middleware handles auth, request enrichment, and static asset caching.
-- **Backend**: Railway CI/CD builds container images with Prisma migrations. Feature flags handled by ConfigCat.
+- **Frontend**: Vercel deployments triggered via GitHub Actions. Edge middleware handles auth, request enrichment, and static asset caching. Dockerfile provided (`frontend/Dockerfile`) for parity builds.
+- **Backend**: Railway (or any container platform) builds the NestJS image via `backend/Dockerfile`. CQRS modules stay modular for microservice extraction.
+- **CI/CD**: `.github/workflows/ci.yml` runs quality gates and validates Docker builds for both services. `docker-compose.yml` provisions local parity (frontend + backend).
 - **Secrets**: Managed via Vercel/ Railway secrets managers, synchronised locally using Doppler CLI (optional).
 
 ---
