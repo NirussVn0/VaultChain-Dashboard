@@ -49,6 +49,7 @@ The dashboard ships as a statically optimised Next.js 16 application deployed on
 - **Visualization**: ApexCharts for intraday time-series (price, prediction overlays) with progressive rendering and tooltips tuned for financial data.
 - **Type Safety**: `src/types` holds DTO contracts that mirror backend query projections; strict TypeScript config prevents implicit any, unchecked access, etc.
 - **Error Resilience**: page-level `loading.tsx` and `error.tsx` provide skeletons and recovery prompts for all critical views.
+- **Auth Shell**: `/auth/login` & `/auth/signup` render shadcn/ui forms with React Hook Form + Zod validation, password strength feedback, and direct integration with the NestJS auth endpoints.
 
 ### Data Flow in the Dashboard
 

@@ -46,6 +46,23 @@ pnpm dev:backend
 
 ---
 
+## 🔐 Authentication Setup
+
+1. **PostgreSQL** – provision a database locally (Docker, Railway, Supabase, etc.) and grab the connection string in the form `postgresql://user:password@host:port/vaultchain`.
+2. **Backend env** – duplicate `backend/.env.example`, set `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN` (seconds), and `PASSWORD_PEPPER`.
+3. **Prisma schema** – generate the client and run migrations:
+   ```bash
+   cd backend
+   pnpm prisma generate --schema=prisma/schema.prisma
+   pnpm prisma migrate deploy --schema=prisma/schema.prisma
+   ```
+4. **Frontend env** – ensure `frontend/.env` has `NEXT_PUBLIC_API_BASE_URL=http://localhost:4000/api/v1` (or your deployed API).
+5. **Run stack** – in one terminal `pnpm dev:backend`, and in another `pnpm dev`. Open [http://localhost:3000/auth/login](http://localhost:3000/auth/login) or `/auth/signup` to exercise the new flows.
+
+> Deployments: ship the frontend to Vercel (environment variables via Project Settings) and the backend to Railway/Fly/Render. Run `pnpm prisma migrate deploy` during release and supply the same env vars.
+
+---
+
 ## 📦 Workspace Scripts
 
 ```bash
