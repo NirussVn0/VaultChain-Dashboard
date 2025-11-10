@@ -49,7 +49,7 @@ export function LoginForm() {
   });
 
   const isSubmitting = form.formState.isSubmitting;
-  const redirectTarget = searchParams.get("redirectTo") || "/";
+  const redirectTarget = (searchParams.get("redirectTo") as Route | null) ?? ("/" as Route);
   const attemptLogin = async (values: LoginFormValues): Promise<void> => {
     try {
       const response = await login({ email: values.email, password: values.password });

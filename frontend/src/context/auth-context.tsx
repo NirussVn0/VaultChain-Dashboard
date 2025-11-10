@@ -30,10 +30,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setFromSession = useCallback((): AuthResponse | null => {
     const session = loadSession();
-    setToken(session?.accessToken ?? null);
-    if (session) {
+    if (!session) {
+      clearSession();
+      setToken(null);
       setSessionExpired(false);
+      return null;
     }
+    setToken(session.accessToken);
+    setSessionExpired(false);
     return session;
   }, []);
 
@@ -52,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStatus("authenticated");
     } catch (error) {
       console.warn("Failed to fetch profile", error);
+      clearSession();
       setUser(null);
       setStatus("unauthenticated");
     }
