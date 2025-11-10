@@ -23,6 +23,7 @@ VaultChain Dashboard is a professional-grade crypto trading platform delivering 
 | **frontend** | ![Next.js](https://img.shields.io/badge/-Next.js%2016-000?logo=next.js) ![React](https://img.shields.io/badge/-React%2019-61dafb?logo=react&logoColor=black)|
 | **backend** | ![NestJS](https://img.shields.io/badge/-NestJS%2014-E0234E?logo=nestjs) |
 | **Components** |![Tailwind CSS](https://img.shields.io/badge/-Tailwind%203.4-06b6d4?logo=tailwindcss&logoColor=white) ![shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000) ![ApexCharts](https://img.shields.io/badge/-ApexCharts-FF6B6B) + `react-apexcharts` + `Radix Primitives`|
+| **Database** | ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?logo=postgresql) |
 | **Utilities** | `clsx` • `tailwind-merge` • `date-fns` |
 ---
 
