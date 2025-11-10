@@ -1,11 +1,12 @@
 'use client';
 
 import Link from "next/link";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Sparkles, UserPlus2 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { register as registerUser, persistSession } from "@/lib/auth-client";
@@ -61,7 +62,10 @@ export function SignupForm() {
   });
 
   const isSubmitting = form.formState.isSubmitting;
-  const passwordValue = form.watch("password");
+  const passwordValue = useWatch({
+    control: form.control,
+    name: "password",
+  });
 
   const handleSubmit = async (values: SignupFormValues): Promise<void> => {
     try {
@@ -156,7 +160,7 @@ export function SignupForm() {
                 )}
               />
 
-              <PasswordChecklist value={passwordValue} />
+              <PasswordChecklist value={passwordValue ?? ""} />
 
               <Button type="submit" className="w-full text-sm font-semibold" disabled={isSubmitting}>
                 {isSubmitting ? (
@@ -176,7 +180,7 @@ export function SignupForm() {
           </div>
           <p className="mt-6 text-center text-sm text-text-secondary">
             Already have access?{" "}
-            <Link className="font-semibold text-primary hover:text-primary/80" href="/login">
+            <Link className="font-semibold text-primary hover:text-primary/80" href={"/login" as Route}>
               Sign in
             </Link>
           </p>

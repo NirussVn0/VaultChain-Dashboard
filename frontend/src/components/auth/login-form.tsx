@@ -1,8 +1,10 @@
 'use client';
 
 import Link from "next/link";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { CheckedState } from "@radix-ui/react-checkbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Lock, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -21,7 +23,7 @@ import { toast } from "@/components/ui/toaster";
 const loginSchema = z.object({
   email: z.string().email("Enter a valid institutional email."),
   password: z.string().min(1, "Password is required."),
-  rememberMe: z.boolean().default(true),
+  rememberMe: z.boolean(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -123,7 +125,7 @@ export function LoginForm() {
                         <Checkbox
                           aria-label="Remember this device"
                           checked={field.value}
-                          onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+                          onCheckedChange={(checked: CheckedState) => field.onChange(checked === true)}
                         />
                       </FormControl>
                       <FormLabel className="text-sm">Remember me</FormLabel>
@@ -131,7 +133,7 @@ export function LoginForm() {
                   )}
                 />
                 <Link
-                  href="/forgot-password"
+                  href={"/forgot-password" as Route}
                   className="text-sm font-medium text-primary transition hover:text-primary/80"
                 >
                   Forgot password?
@@ -156,7 +158,7 @@ export function LoginForm() {
           </div>
           <p className="mt-6 text-center text-sm text-text-secondary">
             Need an account?{" "}
-            <Link className="font-semibold text-primary hover:text-primary/80" href="/signup">
+            <Link className="font-semibold text-primary hover:text-primary/80" href={"/signup" as Route}>
               Request access
             </Link>
           </p>

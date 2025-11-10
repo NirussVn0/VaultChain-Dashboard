@@ -25,6 +25,8 @@ export interface LoginPayload {
   password: string;
 }
 
+export type SessionStorageStrategy = "local" | "session";
+
 export class AuthError extends Error {
   status: number;
   details: Record<string, string> | undefined;
@@ -39,6 +41,30 @@ export class AuthError extends Error {
 
 const API_BASE_URL =
   process.env["NEXT_PUBLIC_API_BASE_URL"]?.replace(/\/$/, "") ?? "http://localhost:4000/api/v1";
+
+export const AUTH_STORAGE_KEY = "vaultchain.auth";
+
+const safeJsonParse = <T,>(raw: string | null): T | null => {
+  if (!raw) {
+    return null;
+  }
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+};
+
+const getStorageDriver = (strategy: SessionStorageStrategy): Storage | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    return strategy === "session" ? window.sessionStorage : window.localStorage;
+  } catch {
+    return null;
+  }
+};
 
 async function request<T>(path: string, init: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -78,14 +104,49 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   });
 }
 
-export function persistSession(response: AuthResponse): void {
-  if (typeof window === "undefined") {
+export function persistSession(
+  response: AuthResponse,
+  options: { storage?: SessionStorageStrategy } = {},
+): void {
+  const storage = getStorageDriver(options.storage ?? "local");
+  if (!storage) {
     return;
   }
 
   try {
-    localStorage.setItem("vaultchain.auth", JSON.stringify(response));
+    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
+    const otherStorage = getStorageDriver(options.storage === "session" ? "local" : "session");
+    otherStorage?.removeItem(AUTH_STORAGE_KEY);
   } catch (error) {
     console.warn("Failed to persist auth session", error);
   }
+}
+
+export function loadSession(): AuthResponse | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const localValue = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    const sessionValue = window.sessionStorage.getItem(AUTH_STORAGE_KEY);
+    return safeJsonParse<AuthResponse>(localValue ?? sessionValue);
+  } catch {
+    return null;
+  }
+}
+
+export function clearSession(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  try {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch (error) {
+    console.warn("Failed to clear auth session", error);
+  }
+}
+
+export function logout(): void {
+  clearSession();
 }
