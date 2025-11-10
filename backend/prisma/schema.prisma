@@ -23,7 +23,70 @@ model User {
   updatedAt       DateTime   @updatedAt
   lastLoginAt     DateTime?
   passwordVersion Int        @default(1)
+  portfolios      Portfolio[]
+  watchlists      Watchlist[]
 
   @@index([email])
   @@map("users")
+}
+
+model Portfolio {
+  id           String              @id @default(uuid())
+  userId       String
+  name         String
+  baseCurrency String              @default("USD")
+  description  String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  positions    PortfolioPosition[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("portfolios")
+}
+
+model PortfolioPosition {
+  id                String   @id @default(uuid())
+  portfolioId       String
+  symbol            String
+  quantity          Decimal  @db.Decimal(36, 18)
+  costBasis         Decimal  @db.Decimal(36, 18)
+  averageEntryPrice Decimal  @db.Decimal(36, 18)
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+  @@map("portfolio_positions")
+}
+
+model Watchlist {
+  id          String           @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  assets      WatchlistAsset[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("watchlists")
+}
+
+model WatchlistAsset {
+  id          String     @id @default(uuid())
+  watchlistId String
+  symbol      String
+  notes       String?
+  createdAt   DateTime   @default(now())
+
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+
+  @@index([watchlistId])
+  @@map("watchlist_assets")
 }

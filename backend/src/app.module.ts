@@ -8,6 +8,8 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { HealthModule } from "./modules/health/health.module";
 import { MarketModule } from "./modules/market/market.module";
 import { UsersModule } from "./modules/users/users.module";
+import { PortfolioModule } from "./modules/portfolio/portfolio.module";
+import { WatchlistModule } from "./modules/watchlist/watchlist.module";
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { UsersModule } from "./modules/users/users.module";
     HealthModule,
     MarketModule,
     AiModule,
+    PortfolioModule,
+    WatchlistModule,
   ],
 })
 export class AppModule {}
