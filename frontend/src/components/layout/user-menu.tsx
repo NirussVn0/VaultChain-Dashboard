@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { Calendar, ChevronDown, LogIn, LogOut, Settings, User } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ const formatter = new Intl.DateTimeFormat("en-US", {
 });
 
 export function UserMenu() {
-  const { user, status, logout } = useAuth();
+  const { user, status, logout, isAuthenticated } = useAuth();
   const router = useRouter();
   const [now, setNow] = useState<Date>(() => new Date());
 
@@ -52,8 +53,8 @@ export function UserMenu() {
     return status === "loading" ? "Syncing…" : "Guest";
   }, [status, user]);
 
-  const email = user?.email ?? "Syncing identity…";
-  const headline = user?.displayName ?? user?.email ?? "VaultChain";
+  const email = isAuthenticated ? user?.email ?? "" : "";
+  const headline = isAuthenticated ? user?.displayName ?? user?.email ?? "VaultChain" : "VaultChain";
   const dateLabel = formatter.format(now);
   const isHydrating = status === "idle" || status === "loading";
 
@@ -68,6 +69,21 @@ export function UserMenu() {
     });
     router.push("/login");
   };
+
+  if (!isAuthenticated) {
+    return (
+      <Button
+        asChild
+        variant="ghost"
+        className="flex items-center gap-2 rounded-xl border border-border/60 bg-background-elevated/40 px-3 py-2 text-sm text-text-primary hover:border-border hover:bg-background-elevated/60"
+      >
+        <Link href="/login">
+          <LogIn className="h-4 w-4" aria-hidden="true" />
+          Sign in
+        </Link>
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu.Root>
