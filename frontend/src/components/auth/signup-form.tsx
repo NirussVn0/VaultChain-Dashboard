@@ -68,16 +68,15 @@ export function SignupForm() {
     control: form.control,
     name: "password",
   });
-
-  const handleSubmit = async (values: SignupFormValues): Promise<void> => {
+  const attemptRegistration = async (values: SignupFormValues): Promise<void> => {
     try {
       const response = await registerUser({
         email: values.email,
         password: values.password,
         displayName: values.displayName,
       });
-      persistSession(response, { storage: "local" });
-      syncAuth(response);
+      const enriched = persistSession(response, { storage: "local" });
+      syncAuth(enriched);
       toast.success("Account created", {
         description: "Provisioning your workspace…",
       });
@@ -87,8 +86,18 @@ export function SignupForm() {
       const message = error instanceof Error ? error.message : "Unable to create account.";
       toast.error("Registration failed", {
         description: message,
+        action: {
+          label: "Retry",
+          onClick: () => {
+            void attemptRegistration(values);
+          },
+        },
       });
     }
+  };
+
+  const handleSubmit = async (values: SignupFormValues): Promise<void> => {
+    await attemptRegistration(values);
   };
 
   return (

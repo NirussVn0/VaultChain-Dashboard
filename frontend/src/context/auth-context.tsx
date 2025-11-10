@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+import { toast } from "@/components/ui/toaster";
 import { clearSession, fetchProfile, loadSession, type AuthResponse, type AuthUser } from "@/lib/auth-client";
 import { AUTH_EVENT_NAME } from "@/lib/auth-constants";
 
@@ -14,7 +15,9 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   refresh: () => Promise<void>;
   login: (session?: AuthResponse) => void;
-  logout: () => void;
+  logout: (reason?: "manual" | "expired") => void;
+  sessionExpired: boolean;
+  acknowledgeSessionExpiry: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -23,10 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [status, setStatus] = useState<AuthStatus>("idle");
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const setFromSession = useCallback((): AuthResponse | null => {
     const session = loadSession();
     setToken(session?.accessToken ?? null);
+    if (session) {
+      setSessionExpired(false);
+    }
     return session;
   }, []);
 
@@ -65,11 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener(AUTH_EVENT_NAME, handler);
   }, [refresh]);
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback((reason: "manual" | "expired" = "manual") => {
     clearSession();
     setUser(null);
     setToken(null);
     setStatus("unauthenticated");
+    setSessionExpired(reason === "expired");
   }, []);
 
   const handleLogin = useCallback(
@@ -78,12 +86,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session.user);
         setToken(session.accessToken);
         setStatus("authenticated");
+        setSessionExpired(false);
         return;
       }
       void refresh();
     },
     [refresh],
   );
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+    const session = loadSession();
+    if (!session?.expiresAt) {
+      return;
+    }
+    const msRemaining = session.expiresAt - Date.now();
+    const timer = window.setTimeout(() => {
+      handleLogout("expired");
+    }, Math.max(msRemaining, 0));
+    return () => window.clearTimeout(timer);
+  }, [handleLogout, token]);
+
+  useEffect(() => {
+    if (!sessionExpired) {
+      return;
+    }
+    toast.error("Session expired", {
+      description: "Please sign in again to continue.",
+    });
+  }, [sessionExpired]);
+
+  const acknowledgeSessionExpiry = useCallback(() => setSessionExpired(false), []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -94,8 +129,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login: handleLogin,
       isAuthenticated: status === "authenticated",
       logout: handleLogout,
+      sessionExpired,
+      acknowledgeSessionExpiry,
     }),
-    [handleLogout, handleLogin, refresh, status, token, user],
+    [acknowledgeSessionExpiry, handleLogout, handleLogin, refresh, sessionExpired, status, token, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

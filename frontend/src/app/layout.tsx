@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import { SessionExpiredNotice } from "@/components/auth/session-expired-notice";
 import { AuthProvider } from "@/context/auth-context";
 import { MarketDataProvider } from "@/providers/market-data-provider";
 
@@ -79,6 +80,7 @@ export default function RootLayout({
           </MarketDataProvider>
         </AuthProvider>
         <Toaster />
+        <SessionExpiredNotice />
       </body>
     </html>
   );

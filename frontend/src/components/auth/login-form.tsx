@@ -50,14 +50,13 @@ export function LoginForm() {
 
   const isSubmitting = form.formState.isSubmitting;
   const redirectTarget = searchParams.get("redirectTo") || "/";
-
-  const handleSubmit = async (values: LoginFormValues): Promise<void> => {
+  const attemptLogin = async (values: LoginFormValues): Promise<void> => {
     try {
       const response = await login({ email: values.email, password: values.password });
-      persistSession(response, {
+      const enriched = persistSession(response, {
         storage: values.rememberMe ? "local" : "session",
       });
-      syncAuth(response);
+      syncAuth(enriched);
       toast.success("Authenticated", {
         description: "Redirecting you to the trading floor…",
       });
@@ -67,8 +66,18 @@ export function LoginForm() {
       const message = error instanceof Error ? error.message : "Unable to sign in.";
       toast.error("Authentication failed", {
         description: message,
+        action: {
+          label: "Retry",
+          onClick: () => {
+            void attemptLogin(values);
+          },
+        },
       });
     }
+  };
+
+  const handleSubmit = async (values: LoginFormValues): Promise<void> => {
+    await attemptLogin(values);
   };
 
   return (

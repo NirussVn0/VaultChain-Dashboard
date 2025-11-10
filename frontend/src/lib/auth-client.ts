@@ -11,6 +11,7 @@ export interface AuthResponse {
   accessToken: string;
   expiresIn: number;
   user: AuthUser;
+  expiresAt?: number;
 }
 
 export interface RegisterPayload {
@@ -107,21 +108,26 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
 export function persistSession(
   response: AuthResponse,
   options: { storage?: SessionStorageStrategy } = {},
-): void {
+): AuthResponse {
   const storage = getStorageDriver(options.storage ?? "local");
   if (!storage) {
-    return;
+    return response;
   }
+  const enriched: AuthResponse = {
+    ...response,
+    expiresAt: Date.now() + response.expiresIn * 1000,
+  };
 
   try {
-    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
+    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(enriched));
     const otherStorage = getStorageDriver(options.storage === "session" ? "local" : "session");
     otherStorage?.removeItem(AUTH_STORAGE_KEY);
-    setAuthCookie(response.accessToken, response.expiresIn);
+    setAuthCookie(enriched.accessToken, enriched.expiresIn);
     emitAuthEvent();
   } catch (error) {
     console.warn("Failed to persist auth session", error);
   }
+  return enriched;
 }
 
 export function loadSession(): AuthResponse | null {
@@ -131,7 +137,12 @@ export function loadSession(): AuthResponse | null {
   try {
     const localValue = window.localStorage.getItem(AUTH_STORAGE_KEY);
     const sessionValue = window.sessionStorage.getItem(AUTH_STORAGE_KEY);
-    return safeJsonParse<AuthResponse>(localValue ?? sessionValue);
+    const parsed = safeJsonParse<AuthResponse>(localValue ?? sessionValue);
+    if (parsed?.expiresAt && parsed.expiresAt <= Date.now()) {
+      clearSession();
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
