@@ -93,8 +93,12 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { formMessageId } = useFormField();
-  const body = children ?? "This field is required";
+  const { formMessageId, error } = useFormField();
+  const body = error ? String(error.message) : children;
+
+  if (!body) {
+    return null;
+  }
 
   return (
     <p ref={ref} id={formMessageId} className={cn("text-xs font-medium text-danger", className)} {...props}>
