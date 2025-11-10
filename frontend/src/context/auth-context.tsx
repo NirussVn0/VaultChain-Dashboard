@@ -2,14 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import {
-  AUTH_EVENT_NAME,
-  clearSession,
-  fetchProfile,
-  loadSession,
-  type AuthResponse,
-  type AuthUser,
-} from "@/lib/auth-client";
+import { clearSession, fetchProfile, loadSession, type AuthResponse, type AuthUser } from "@/lib/auth-client";
+import { AUTH_EVENT_NAME } from "@/lib/auth-constants";
 
 type AuthStatus = "idle" | "loading" | "authenticated" | "unauthenticated";
 
@@ -17,7 +11,9 @@ interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
   status: AuthStatus;
+  isAuthenticated: boolean;
   refresh: () => Promise<void>;
+  login: (session?: AuthResponse) => void;
   logout: () => void;
 }
 
@@ -55,7 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setFromSession]);
 
   useEffect(() => {
-    void refresh();
+    const id = setTimeout(() => {
+      void refresh();
+    }, 0);
+    return () => clearTimeout(id);
   }, [refresh]);
 
   useEffect(() => {
@@ -73,15 +72,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus("unauthenticated");
   }, []);
 
+  const handleLogin = useCallback(
+    (session?: AuthResponse) => {
+      if (session) {
+        setUser(session.user);
+        setToken(session.accessToken);
+        setStatus("authenticated");
+        return;
+      }
+      void refresh();
+    },
+    [refresh],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       token,
       status,
       refresh,
+      login: handleLogin,
+      isAuthenticated: status === "authenticated",
       logout: handleLogout,
     }),
-    [handleLogout, refresh, status, token, user],
+    [handleLogout, handleLogin, refresh, status, token, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

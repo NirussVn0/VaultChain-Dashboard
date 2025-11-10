@@ -17,6 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toaster";
+import { useAuth } from "@/context/auth-context";
 
 import { PasswordChecklist } from "./password-checklist";
 
@@ -51,6 +52,7 @@ const overlayMotion = {
 
 export function SignupForm() {
   const router = useRouter();
+  const { login: syncAuth } = useAuth();
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -75,6 +77,7 @@ export function SignupForm() {
         displayName: values.displayName,
       });
       persistSession(response, { storage: "local" });
+      syncAuth(response);
       toast.success("Account created", {
         description: "Provisioning your workspace…",
       });

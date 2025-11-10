@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { CheckedState } from "@radix-ui/react-checkbox";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +19,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toaster";
+import { useAuth } from "@/context/auth-context";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid institutional email."),
@@ -36,6 +37,8 @@ const overlayMotion = {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login: syncAuth } = useAuth();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,6 +49,7 @@ export function LoginForm() {
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const redirectTarget = searchParams.get("redirectTo") || "/";
 
   const handleSubmit = async (values: LoginFormValues): Promise<void> => {
     try {
@@ -53,10 +57,11 @@ export function LoginForm() {
       persistSession(response, {
         storage: values.rememberMe ? "local" : "session",
       });
+      syncAuth(response);
       toast.success("Authenticated", {
         description: "Redirecting you to the trading floor…",
       });
-      router.push("/");
+      router.push(redirectTarget);
       router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to sign in.";

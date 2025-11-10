@@ -1,3 +1,5 @@
+'use client';
+
 import type { ComponentType, SVGProps } from "react";
 import {
   Compass,
@@ -12,6 +14,7 @@ import type { Route } from "next";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
 
 interface SidebarProps {
   activePath?: string;
@@ -35,6 +38,17 @@ const NAV_ITEMS: ReadonlyArray<NavItem> = [
  * Left navigation for the dashboard shell.
  */
 export function Sidebar({ activePath = "/" }: SidebarProps) {
+  const { user } = useAuth();
+  const initials =
+    (user?.displayName ?? user?.email ?? "VC")
+      .split(" ")
+      .map((chunk) => chunk.charAt(0))
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "VC";
+  const operatorName = user?.displayName ?? user?.email ?? "VaultChain Operator";
+  const deskLabel = user?.roles?.[0] ?? "Command Suite";
+
   return (
     <aside className="flex w-[260px] flex-col justify-between rounded-2xl border border-border bg-background-surface/70 p-6 shadow-card shadow-black/20">
       <div className="space-y-8">
@@ -74,14 +88,12 @@ export function Sidebar({ activePath = "/" }: SidebarProps) {
       </div>
       <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-background-elevated/40 p-4">
         <Avatar className="h-11 w-11 border-border/70">
-          <AvatarFallback>AO</AvatarFallback>
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <span className="text-sm font-semibold text-text-primary">
-            Aurora Ops
-          </span>
+          <span className="text-sm font-semibold text-text-primary">{operatorName}</span>
           <span className="text-xs uppercase tracking-[0.2em] text-text-tertiary">
-            Multi-sig wallet
+            {deskLabel}
           </span>
         </div>
       </div>

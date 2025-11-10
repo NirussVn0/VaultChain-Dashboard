@@ -42,8 +42,7 @@ export class AuthError extends Error {
 const API_BASE_URL =
   process.env["NEXT_PUBLIC_API_BASE_URL"]?.replace(/\/$/, "") ?? "http://localhost:4000/api/v1";
 
-export const AUTH_STORAGE_KEY = "vaultchain.auth";
-export const AUTH_EVENT_NAME = "vaultchain-auth";
+import { AUTH_COOKIE_NAME, AUTH_EVENT_NAME, AUTH_STORAGE_KEY } from "./auth-constants";
 
 const safeJsonParse = <T,>(raw: string | null): T | null => {
   if (!raw) {
@@ -118,6 +117,7 @@ export function persistSession(
     storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
     const otherStorage = getStorageDriver(options.storage === "session" ? "local" : "session");
     otherStorage?.removeItem(AUTH_STORAGE_KEY);
+    setAuthCookie(response.accessToken, response.expiresIn);
     emitAuthEvent();
   } catch (error) {
     console.warn("Failed to persist auth session", error);
@@ -144,6 +144,7 @@ export function clearSession(): void {
   try {
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
     window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    clearAuthCookie();
     emitAuthEvent();
   } catch (error) {
     console.warn("Failed to clear auth session", error);
@@ -176,4 +177,19 @@ function emitAuthEvent(): void {
     return;
   }
   window.dispatchEvent(new Event(AUTH_EVENT_NAME));
+}
+
+function setAuthCookie(token: string, maxAgeSeconds: number): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+  const maxAge = Number.isFinite(maxAgeSeconds) && maxAgeSeconds > 0 ? maxAgeSeconds : 3600;
+  document.cookie = `${AUTH_COOKIE_NAME}=${token}; path=/; max-age=${maxAge}; SameSite=Strict; secure`;
+}
+
+function clearAuthCookie(): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+  document.cookie = `${AUTH_COOKIE_NAME}=; path=/; max-age=0; SameSite=Strict; secure`;
 }
