@@ -43,6 +43,7 @@ const API_BASE_URL =
   process.env["NEXT_PUBLIC_API_BASE_URL"]?.replace(/\/$/, "") ?? "http://localhost:4000/api/v1";
 
 export const AUTH_STORAGE_KEY = "vaultchain.auth";
+export const AUTH_EVENT_NAME = "vaultchain-auth";
 
 const safeJsonParse = <T,>(raw: string | null): T | null => {
   if (!raw) {
@@ -117,6 +118,7 @@ export function persistSession(
     storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
     const otherStorage = getStorageDriver(options.storage === "session" ? "local" : "session");
     otherStorage?.removeItem(AUTH_STORAGE_KEY);
+    emitAuthEvent();
   } catch (error) {
     console.warn("Failed to persist auth session", error);
   }
@@ -142,6 +144,7 @@ export function clearSession(): void {
   try {
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
     window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    emitAuthEvent();
   } catch (error) {
     console.warn("Failed to clear auth session", error);
   }
@@ -149,4 +152,28 @@ export function clearSession(): void {
 
 export function logout(): void {
   clearSession();
+}
+
+export function getStoredToken(): string | null {
+  return loadSession()?.accessToken ?? null;
+}
+
+export async function fetchProfile(accessToken?: string): Promise<AuthUser> {
+  const token = accessToken ?? getStoredToken();
+  if (!token) {
+    throw new AuthError("Missing session", 401);
+  }
+  return request<AuthUser>("/auth/me", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+function emitAuthEvent(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new Event(AUTH_EVENT_NAME));
 }
