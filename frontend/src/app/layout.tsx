@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 import { MarketDataProvider } from "@/providers/market-data-provider";
 
 import "./globals.css";
@@ -74,6 +75,7 @@ export default function RootLayout({
         <MarketDataProvider>
           {children}
         </MarketDataProvider>
+        <Toaster />
       </body>
     </html>
   );

@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Secure Access · VaultChain",
+  title: {
+    default: "Secure Access · VaultChain",
+    template: "%s · VaultChain",
+  },
   description: "Institutional-grade authentication for the VaultChain trading & analytics suite.",
 };
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthRouteGroupLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#050917] via-[#0B1124] to-[#111C3A] text-text-primary">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.22),_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_60%)]" />
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-primary/30 to-transparent blur-3xl" />
       <div className="relative z-10 mx-auto grid min-h-dvh w-full max-w-6xl gap-10 px-6 py-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="flex flex-col justify-between rounded-3xl border border-white/5 bg-white/5 p-8 text-white shadow-2xl backdrop-blur-2xl">
@@ -21,8 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 Encrypted access to TradingView-grade execution tooling.
               </h1>
               <p className="text-base text-white/70">
-                Multifactor policies, anomaly monitoring, and role-aware JWT sessions keep every desk
-                compliant from onboarding to final sign-off.
+                Multifactor policies, anomaly monitoring, and role-aware JWT sessions keep every desk compliant from onboarding to final sign-off.
               </p>
             </div>
           </div>
