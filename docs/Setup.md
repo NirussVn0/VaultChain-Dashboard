@@ -152,6 +152,22 @@ pnpm prisma migrate deploy --schema=prisma/schema.prisma
 pnpm prisma studio
 ```
 
+
+## 📚 Auth
+
+### Storage & Middleware
+
+- **Token storage:** `persistSession` writes the JWT to either `localStorage` (remember me) or `sessionStorage`, augments it with `expiresAt`, and mirrors it to a secure `vc-auth` cookie for middleware checks.
+- **Middleware (`frontend/middleware.ts`):** Guards every route except `/login`, `/signup`, and `/forgot-password`. Authenticated users hitting `/login` or `/signup` are bounced back to `/`.
+- **Auto logout:** `AuthProvider` schedules a timeout using the JWT expiry, clears storage, emits a toast, and surfaces the session-expired alert.
+
+### Usage
+Ensure backend is running with matching JWT secret + PostgreSQL connection (see `backend/.env.example`).
+
+1. Visit `http://localhost:3000/signup` to create an account.
+2. JWT + profile are synced automatically; protected dashboard routes (`/`, `/markets`, etc.) now load.
+3. Use the user menu → **Sign out** to clear storage and return to `/login`.
+
 ***
 
 ## 🚀 Running the Project
@@ -196,7 +212,6 @@ docker compose up --build
    ```
 
 ***
-
 ## 📦 Available Scripts
 
 | Command | Description |
