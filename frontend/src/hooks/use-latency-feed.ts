@@ -52,10 +52,6 @@ const parseLatency = (payload: unknown): number | null => {
   return null;
 };
 
-/**
- * Consumes a latency heartbeat WebSocket endpoint. When the socket is unavailable,
- * the hook gracefully degrades into a synthetic feed to keep the UI responsive.
- */
 export function useLatencyFeed(
   url: string | undefined,
   { mockIntervalMs = 3000, forceMock = false }: UseLatencyFeedOptions = {},

@@ -12,7 +12,6 @@ RUN pnpm install --filter @vaultchain/backend...
 FROM deps AS build
 COPY backend backend
 
-# Dùng npx (không cần global prisma CLI)
 RUN npx prisma generate --schema=backend/prisma/schema.prisma
 
 # Build backend
@@ -27,10 +26,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY backend/package.json backend/package.json
 COPY backend/prisma backend/prisma
 
-# Install production dependencies (bao gồm prisma nếu đã add vào dependencies)
+# Install production dependencies
 RUN pnpm install --filter @vaultchain/backend... --prod --ignore-scripts
 
-# Generate Prisma Client cho runtime
 RUN npx prisma generate --schema=backend/prisma/schema.prisma
 
 # Copy built code

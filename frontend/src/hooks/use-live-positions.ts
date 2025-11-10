@@ -66,9 +66,6 @@ const retrieveTicker = (
   return tickerMap[feed] ?? FALLBACK_TICKERS[feed];
 };
 
-/**
- * Projects the active positions array with live mark prices sourced from the market store.
- */
 export function useLivePositions(): LivePosition[] {
   const tickerMap = useMarketTickers(positionSymbols);
 
