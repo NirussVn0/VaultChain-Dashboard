@@ -1,22 +1,75 @@
-version: "3.9"
+#version: "3.9"
 
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: vaultchain-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vaultchain
+      POSTGRES_PASSWORD: nt2202
+      POSTGRES_DB: vaultchain
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vaultchain -d vaultchain"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vaultchain-network
+
+  # Backend API
   backend:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    env_file:
-      - backend/.env.example
+    container_name: vaultchain-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://vaultchain:nt2202@postgres:5432/vaultchain
+      JWT_SECRET: ${JWT_SECRET:-please-change-me-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-3600}
+      PASSWORD_PEPPER: ${PASSWORD_PEPPER:-optional-extra-secret}
     ports:
       - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - vaultchain-network
+    command: >
+      sh -c "
+        pnpm prisma migrate deploy --schema=backend/prisma/schema.prisma &&
+        pnpm --filter @vaultchain/backend start
+      "
 
+  # Frontend Next.js
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+    container_name: vaultchain-frontend
+    restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://backend:4000/api/v1
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api/v1
+      NEXT_PUBLIC_MARKETDATA_WS_URL: ${NEXT_PUBLIC_MARKETDATA_WS_URL:-}
+      NEXT_PUBLIC_MARKETDATA_FORCE_MOCK: ${NEXT_PUBLIC_MARKETDATA_FORCE_MOCK:-false}
     ports:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - vaultchain-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  vaultchain-network:
+    driver: bridge

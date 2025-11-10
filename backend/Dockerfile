@@ -7,10 +7,15 @@ RUN corepack enable
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY backend/package.json backend/package.json
-RUN pnpm install --filter @vaultchain/backend... --frozen-lockfile
+RUN pnpm install --filter @vaultchain/backend...
 
 FROM deps AS build
 COPY backend backend
+
+# Dùng npx (không cần global prisma CLI)
+RUN npx prisma generate --schema=backend/prisma/schema.prisma
+
+# Build backend
 RUN pnpm --filter @vaultchain/backend build
 
 FROM node:20-alpine AS runtime
@@ -20,9 +25,16 @@ ENV NODE_ENV=production
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY backend/package.json backend/package.json
-RUN pnpm install --filter @vaultchain/backend... --prod --frozen-lockfile --ignore-scripts
+COPY backend/prisma backend/prisma
+
+# Install production dependencies (bao gồm prisma nếu đã add vào dependencies)
+RUN pnpm install --filter @vaultchain/backend... --prod --ignore-scripts
+
+# Generate Prisma Client cho runtime
+RUN npx prisma generate --schema=backend/prisma/schema.prisma
+
+# Copy built code
 COPY --from=build /app/backend/dist backend/dist
-COPY backend/.env.example backend/.env.example
 
 EXPOSE 4000
 CMD ["pnpm", "--filter", "@vaultchain/backend", "start"]
