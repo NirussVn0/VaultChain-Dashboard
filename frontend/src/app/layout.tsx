@@ -78,9 +78,9 @@ export default function RootLayout({
           <MarketDataProvider>
             {children}
           </MarketDataProvider>
+          <Toaster />
+          <SessionExpiredNotice />
         </AuthProvider>
-        <Toaster />
-        <SessionExpiredNotice />
       </body>
     </html>
   );
