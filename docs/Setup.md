@@ -187,7 +187,7 @@ docker compose up --build
 
 2. **Frontend Access:**
    - Open [http://localhost:3000](http://localhost:3000)
-   - Navigate to [http://localhost:3000/auth/login](http://localhost:3000/auth/login)
+   - Navigate to [http://localhost:3000/login](http://localhost:3000/login) or [http://localhost:3000/signup](http://localhost:3000/signup)
 
 3. **Database Connection:**
    ```bash
