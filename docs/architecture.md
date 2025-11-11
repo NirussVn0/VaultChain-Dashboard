@@ -49,6 +49,7 @@ The dashboard ships as a statically optimised Next.js 16 application deployed on
 - **Visualization**: ApexCharts for intraday time-series (price, prediction overlays) with progressive rendering and tooltips tuned for financial data.
 - **Type Safety**: `src/types` holds DTO contracts that mirror backend query projections; strict TypeScript config prevents implicit any, unchecked access, etc.
 - **Error Resilience**: page-level `loading.tsx` and `error.tsx` provide skeletons and recovery prompts for all critical views.
+- **Auth Shell**: `/login` & `/signup` render shadcn/ui forms with React Hook Form + Zod validation, password strength feedback, and direct integration with the NestJS auth endpoints.
 
 ### Data Flow in the Dashboard
 
@@ -79,6 +80,36 @@ src/
 - **Integration**: AI module orchestrates LSTM predictions via internal inference service (Python microservice) and CryptoBERT via managed model endpoint. Results cached and versioned.
 - **Security**: Auth0 / JWT guard at API gateway, with per-org RBAC enforced in NestJS guards and policy decorators.
 - **Observability**: OpenTelemetry instrumentation with traces shipped to Grafana Tempo; logging via Pino + Loki.
+
+### Authentication & Identity Layer
+
+- **Module Stack**: `AuthModule` (Passport local + JWT strategies), `UsersModule` (Prisma ORM), and a global `PrismaModule` for PostgreSQL connectivity.
+- **Database**: PostgreSQL table `users` managed via Prisma migrations (`backend/prisma/migrations`).
+
+```prisma
+model User {
+  id              String     @id @default(uuid())
+  email           String     @unique
+  passwordHash    String
+  displayName     String?
+  roles           UserRole[] @default([TRADER])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  lastLoginAt     DateTime?
+  passwordVersion Int        @default(1)
+}
+```
+
+- **Password Policy**: argon2id hashing + configurable pepper, minimum 12 chars with upper/lower/digit/symbol enforced on both client and server.
+- **JWT Payload**: `{ sub, email, roles, pv }` where `pv` (passwordVersion) enables token invalidation after forced resets. Default expiry is 3600 seconds (configurable via `JWT_EXPIRES_IN`).
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/auth/register` | POST | Creates a user, hashes password, auto-logs in on success. |
+| `/api/v1/auth/login` | POST | Validates credentials via Passport local strategy, returns JWT. |
+| `/api/v1/auth/me` | GET | Returns the authenticated profile, protected by `JwtAuthGuard`. |
+
+Error responses follow `{ statusCode, message, error }` without leaking stack traces in production mode.
 
 ---
 

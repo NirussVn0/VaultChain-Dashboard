@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
+import { SessionExpiredNotice } from "@/components/auth/session-expired-notice";
+import { AuthProvider } from "@/context/auth-context";
 import { MarketDataProvider } from "@/providers/market-data-provider";
 
 import "./globals.css";
@@ -71,9 +74,13 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        <MarketDataProvider>
-          {children}
-        </MarketDataProvider>
+        <AuthProvider>
+          <MarketDataProvider>
+            {children}
+          </MarketDataProvider>
+          <Toaster />
+          <SessionExpiredNotice />
+        </AuthProvider>
       </body>
     </html>
   );
