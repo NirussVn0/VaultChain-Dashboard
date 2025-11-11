@@ -77,12 +77,12 @@ docker compose up --build
 
 ## ✨ Key Features
 
-- ✅ **Real-time Market Data** — Live crypto feeds with WebSocket integration
-- ✅ **AI-Powered Forecasting** — LSTM price prediction + CryptoBERT sentiment
-- ✅ **Professional UI** — TradingView-grade design with dark/light modes
-- ✅ **Institutional-Grade** — High-performance charting & execution tooling
-- ✅ **Type-Safe** — 100% TypeScript strict mode
-- ✅ **Production-Ready** — Clean architecture + best practices
+- [x] **Real-time Market Data** — Live crypto feeds with WebSocket integration
+- [ ] **AI-Powered Forecasting** — LSTM price prediction + CryptoBERT sentiment
+- [x] **Professional UI** — TradingView-grade design with dark/light modes
+- [ ] **Institutional-Grade** — High-performance charting & execution tooling
+- [x] **Type-Safe** — 100% TypeScript strict mode
+- [x] **Production-Ready** — Clean architecture + best practices
 
 ---
 
