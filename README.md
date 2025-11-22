@@ -40,8 +40,8 @@ pnpm dev
 pnpm dev:backend
 ```
 
-🌐 Frontend: [http://localhost:3000](http://localhost:3000)  
-🛡️ Backend REST: [http://localhost:4000/api/v1](http://localhost:4000/api/v1)
+- Frontend: [http://localhost:3000](http://localhost:3000)  
+- Backend REST: [http://localhost:4000/api/v1](http://localhost:4000/api/v1)
 
 > Copy `.env.example` to `.env` in both `frontend/` and `backend/` when supplying real credentials (AI provider keys, custom REST endpoints, etc.).
 
