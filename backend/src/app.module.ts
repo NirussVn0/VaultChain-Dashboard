@@ -10,6 +10,7 @@ import { MarketModule } from "./modules/market/market.module";
 import { UsersModule } from "./modules/users/users.module";
 import { PortfolioModule } from "./modules/portfolio/portfolio.module";
 import { WatchlistModule } from "./modules/watchlist/watchlist.module";
+import { PredictionModule } from "./modules/prediction/prediction.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WatchlistModule } from "./modules/watchlist/watchlist.module";
     HealthModule,
     MarketModule,
     AiModule,
+    PredictionModule,
     PortfolioModule,
     WatchlistModule,
   ],

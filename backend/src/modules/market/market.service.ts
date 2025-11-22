@@ -24,8 +24,13 @@ interface BinanceDepthResponse {
   asks: Array<[string, string]>;
 }
 
-interface BinanceTimeResponse {
+export interface BinanceTimeResponse {
   serverTime: number;
+}
+
+export interface BinanceKline {
+  openTime: number;
+  close: number;
 }
 
 @Injectable()
@@ -91,6 +96,23 @@ export class MarketService {
     const latency = finished - started;
 
     return new LatencyResponseDto(new Date(data.serverTime).toISOString(), new Date(finished).toISOString(), latency);
+  }
+
+  async getKlines(symbol: string, interval = "1h", limit = 200): Promise<BinanceKline[]> {
+    const response = await fetch(
+      `${this.restBase}/api/v3/klines?symbol=${encodeURIComponent(symbol.toUpperCase())}&interval=${interval}&limit=${limit}`,
+    );
+
+    if (!response.ok) {
+      const payload = await response.text();
+      throw new Error(`Unable to fetch klines (${response.status}): ${payload}`);
+    }
+
+    const raw = (await response.json()) as Array<[number, string, string, string, string, string]>;
+    return raw.map((item) => ({
+      openTime: item[0],
+      close: Number.parseFloat(item[4]),
+    }));
   }
 
   private transformDepth(levels: Array<[string, string]>): OrderBookLevel[] {

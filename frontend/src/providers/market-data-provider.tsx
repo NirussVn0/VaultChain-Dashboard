@@ -62,14 +62,22 @@ const MAX_BOOK_LEVELS = 12;
 const isTickerStream = (stream: string): boolean => stream.endsWith("@ticker");
 const isDepthStream = (stream: string): boolean => stream.includes("@depth");
 
-const toOrderBookEntries = (levels: Array<[string, string]>): OrderBookEntry[] => {
+const toOrderBookEntries = (levels?: Array<[string, string]> | null): OrderBookEntry[] => {
+  if (!Array.isArray(levels) || levels.length === 0) {
+    return [];
+  }
   let cumulative = 0;
-  return levels.slice(0, MAX_BOOK_LEVELS).map(([priceRaw, quantityRaw]) => {
-    const price = Number.parseFloat(priceRaw);
-    const quantity = Number.parseFloat(quantityRaw);
-    cumulative += quantity;
-    return { price, quantity, cumulative };
-  });
+  return levels
+    .filter((entry): entry is [string, string] => Array.isArray(entry) && entry.length >= 2)
+    .slice(0, MAX_BOOK_LEVELS)
+    .map(([priceRaw, quantityRaw]) => {
+      const price = Number.parseFloat(priceRaw);
+      const quantity = Number.parseFloat(quantityRaw);
+      const safePrice = Number.isFinite(price) ? price : 0;
+      const safeQuantity = Number.isFinite(quantity) ? quantity : 0;
+      cumulative += safeQuantity;
+      return { price: safePrice, quantity: safeQuantity, cumulative };
+    });
 };
 
 const parseTicker = (event: BinanceTickerEvent): MarketTicker => {

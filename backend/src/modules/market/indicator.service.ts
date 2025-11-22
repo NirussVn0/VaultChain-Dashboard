@@ -1,14 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 
-import type { AppConfig } from "../../common/config/app.config";
-import { APP_CONFIG } from "../../common/providers/app-config.provider";
 import { InMemoryCache } from "../../common/cache/in-memory-cache";
 import { MarketService } from "./market.service";
 
-interface BinanceKline {
-  openTime: number;
-  close: number;
-}
 
 export interface IndicatorSnapshot {
   symbol: string;
@@ -26,7 +20,6 @@ export class MarketIndicatorService {
 
   constructor(
     private readonly marketService: MarketService,
-    @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
   async getIndicators(symbol: string): Promise<IndicatorSnapshot> {
@@ -38,7 +31,7 @@ export class MarketIndicatorService {
 
     const [spot, klines] = await Promise.all([
       this.marketService.getSpotSummary(key),
-      this.fetchKlines(key),
+      this.marketService.getKlines(key),
     ]);
 
     const closes = klines.map((item) => item.close);
@@ -58,23 +51,6 @@ export class MarketIndicatorService {
 
     this.cache.set(key, snapshot);
     return snapshot;
-  }
-
-  private async fetchKlines(symbol: string): Promise<BinanceKline[]> {
-    const response = await fetch(
-      `${this.config.marketRestEndpoint.replace(/\/$/, "")}/api/v3/klines?symbol=${encodeURIComponent(symbol)}&interval=1h&limit=200`,
-    );
-
-    if (!response.ok) {
-      const payload = await response.text();
-      throw new Error(`Unable to fetch klines (${response.status}): ${payload}`);
-    }
-
-    const raw = (await response.json()) as Array<[number, string, string, string, string, string]>;
-    return raw.map((item) => ({
-      openTime: item[0],
-      close: Number.parseFloat(item[4]),
-    }));
   }
 
   private simpleMovingAverage(values: number[], window: number): number {
